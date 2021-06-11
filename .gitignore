@@ -147,3 +147,7 @@ data/
 results/
 sanity_check_en_es_data/
 chr_en_data
+*.bin.optim
+*.bin
+*.json
+mingpt-demo/
