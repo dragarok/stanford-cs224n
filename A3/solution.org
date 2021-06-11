@@ -1,0 +1,133 @@
+#+TITLE: Myplan
+#+LATEX_HEADER: \usepackage[margin=0.5in]{geometry}
+
+* Adam Optimizer
+
++ Momentum given using factor \beta_{1}.
++ Rolling momentum.
++ This hyperparameter \beta_{1} is usually set to 0.9. Means you take emphasize more on the momentum than you do on the actual gradient.
+
+** QUESTION 1.a.i
+
+How does using $m$ stops the updates from varying as much and why this low variance may be helpful to learning, overall?
+
+*** ANSWER:
+By using momentum parameter, you just don't go anywhere in the optimization space.
+
+    Imagine you are at one point in optimization space and you jump directly to another point, completely missing the local minima you were going through. By including this hyperparameter, you don't let yourself astray too much from your actual path and make progress in the same direction that you want to follow to get lower and lower and reach some kind of minima although that may not be the global minima.
+
+This low variance helps learning:
+
+    Suppose that you had a really bad prediction on a batch. Now, the gradients will be massive compared to the times when your predictions were partially correct. Now, this gradient might move you so far from the direction you were moving that it will again feel like you are starting from scratch to reach the local minima. So, instead of doing this noisy gradient updates, if you include momentum term and give maximum preference to it, then your movement will most probably result in directing process towards local minima.
+** QUESTION 1.a.ii
+
+How is /adaptive learning rate/ $v$ actually useful in learning? Which of the model parameters will get larger updates?
+
+*** ANSWER:
+
+The sparser the gradients, the adaptive learning rate is higher. The bigger the gradients, the square root term will lessen the gradient update using adaptive learning rate.
+This is all done by dividing by $\sqrt{v}$. For parameters with larger gradients, it will result in learning rate being smaller and for parameters with smaller gradietns, it will result a learning rate that is bigger.
+
+** QUESTION 1.b.i
+
+What must \gamma equal in terms of p_{drop} ?
+
+*** ANSWER:
+
+From the equations, we can find that:
+$$ \gamma = \frac { 1 } { 1 - p_{drop}} $$
+
+PURPOSE OF DOING THIS: This is done for making distribution of the values after affine transformation close to that during inference time.
+** QUESTION 1.b.ii
+
+Why should dropout be applied during training? Why should dropout not be used during evaluation?
+
+*** ANSWER:
+
+During training, using dropout is like working out with different muscles specifically. By turning off some neurons in the network, you let the network learn to use other neurons to represent the prediction. You don't workout with the same pair of neurons but with random sampled neurons using p_{prob} for either turning on or off for a neuron. This way, our model learns to use all the parameters properly.
+
+In cases where dropout is not used, your deep networks might have many such neurons that don't work at all. They don't encode any new information and don't contribute to the prediction process overall. We don't want that to happen. It prevents co-adaptation ( over-fitting to seeing specific feature constellations. )
+
+Now, during evaluation, we will use all the possible information we have from the model to predict the output. So, we don't use dropout in evaluation.
+* Neural Machine Translation
+** QUESTION 2.a
+
+Complete the dependency tree configuration after 4th step.
+
+*** ANSWER:
+
+| Stack                          | Buffer                                 | New dependency      | Transition            |
+|--------------------------------+----------------------------------------+---------------------+-----------------------|
+| ​[​ROOT]                         | [I, parsed, this, sentence, correctly] |                     | Initial Configuration |
+| ​[​ROOT, I]                      | [parsed, this, sentence, correctly]    |                     | SHIFT                 |
+| ​[​ROOT, I, parsed]              | [this, sentence, correctly]            |                     | SHIFT                 |
+| ​[​ROOT, parsed]                 | [this, sentence, correctly]            | parsed -> I         | LEFT-ARC              |
+| ​[​ROOT, parsed, this]           | [sentence, correctly]                  |                     | SHIFT                 |
+| ​[​ROOT, parsed, this, sentence] | [correctly]                            |                     | SHIFT                 |
+| ​[​ROOT, parsed, sentence]       | [correctly]                            | sentence -> this    | LEFT-ARC              |
+| ​[​ROOT, parsed]                 | [correctly]                            | parsed -> sentence  | RIGHT-ARC             |
+| ​[​ROOT, parsed, correctly]      | []                                     |                     | SHIFT                 |
+| ​[​ROOT, parsed]                 | []                                     | parsed -> correctly | RIGHT-ARC             |
+| ​[​ROOT]                         | []                                     | ROOT -> parsed      | RIGHT-ARC             |
+
+** QUESTION 2.b
+
+A sentence containing n words will be parsed in how many steps ? Briefly explain in 1-2 sentences.
+
+*** ANSWER:
+
+Each word must one time be shifted from the buffer to the stack. This will result in $n$ operations.
+Now, for each word in stack is removed from there using LEFT-ARC or RIGHT-ARC operation once which also will result in $n$ operations.
+Hence, in total we will have $2n$ operations. Thus, complexity is O(n).
+** QUESTION 2.e
+
+Model's UAS on validation and test set.
+
+*** ANSWER:
+
+BEST UAS SCORE on test set: 88.89
+BEST UAS SCORE on dev set: 88.91
+
+** QUESTION 2.f
+
++ For each of the four sentences, state the type of error, incorrect dependency, and the correct dependency.
+
+#+begin_quote
+    * Error Type: Prepositional Phrase Attachment Error
+    * Incorrect Dependency : troops -> Afghanistan
+    * Correct Dependency : sent -> Afghanistan
+#+end_quote
+
+1. I disembarked and was heading to a wedding fearing my death.
+   #+begin_quote
+    * Error Type: Verb Phrase Attachment Error
+    * Incorrect Dependency : wedding -> fearing
+    * Correct Dependency : heading -> fearing
+   #+end_quote
+
+2. It makes me want to rush out and rescue people from dilemmas of their own making.
+   #+begin_quote
+    * Error Type: Coordination Attachment Error
+    * Incorrect Dependency : makes -> rescue
+    * Correct Dependency : rush -> rescue
+   #+end_quote
+
+3. It is on loan from a guy named Joe O'Neill in Midland, Texas.
+   #+begin_quote
+    * Error Type: Prepositional Phrase Attachment Error
+    * Incorrect Dependency : named -> Midland
+    * Correct Dependency : guy -> Midland
+   #+end_quote
+
+4. Brian has been one of the most crucial elements to the success of Mozilla software.
+   #+begin_quote
+    * Error Type: Modifier Attachment Error
+    * Incorrect Dependency : elements -> most
+    * Correct Dependency : crucial -> most
+   #+end_quote
+
+* References
+
++ https://leimao.github.io/blog/Dropout-Explained/
++ https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/
++ https://mlfromscratch.com/optimizers-explained/#/
