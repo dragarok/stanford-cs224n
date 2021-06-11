@@ -1,0 +1,114 @@
+#+TITLE: A2 Solution
+
+* Q.1.a
+
+Show that naive-softmax loss is the same as the cross-entropy loss between $y$ and $\hat{y}$.
+
+** Answer
+
+We know that $y$ is one hot vector with only one 1 for true outside word. Thus,
+
+    $$ - \sum_{w \in vocab} y_{w} log(\hat{y}_{w})$$ becomes :
+
+        $$ - [ 0 log(\hat{y}_{1}) + ... +  1 log(\hat{y}_{0}),..., 0 log(\hat{y}_{|V|})] = - log(\hat{y}_{0})$$
+* Q.1.b
+
+Compute the partial derivative of $J_{naive-softmax}(uc, o , U) = -logP(O = o|C = c)$ w.r.t. $v_{c}$.
+
+** Answer
+
+Given : $-\log P(O=o \mid C=c)=-\log \frac{e^{u_{o}^{T} v_{c}}}{\sum_{w \in V o c a b} e^{u_{\omega}^{T} v_{c}}}$, then we have :
+
+$$ \begin{aligned}
+\frac{\partial J}{\partial v_{c}} &=-u_{o}+\frac{1}{\sum_{w \in vocab} e^{u_{w}^{T}v_{c}}}\sum_{w \in Vocab}\left(e^{u_{w}^{T}v_{c}}u_{w}\right) \\
+&=-u_{o} + \sum_{w \in Vocab}\left(\frac{e^{u_{w}^{T}v_{c}}}{\sum_{w \in vocab} e^{u_{w}^{T}v_{c}}}u_{w}\right) \\
+&=-u_{o}+\sum_{w \in vocab} (P(u_{w}|v_{c})u_{w}) \\
+&=-u\(_{o}\)+ \sum_{w \in vocab}\left(\hat{y}_{w} u_{w} \right)
+\end{aligned} $$
+* Q.1.c
+
+Compute partial derivative of $J_{naive-softmax}$ with repect to each of outside word vectors $u_{w}$'s. Two cases when w = 0 and w \ne 0.
+
+** Answer
+
+1. When w = 0,
+    $$ \begin{aligned}
+   \frac{\partial J}{\partial u_{w=o}} &=-v_{c}+\frac{1}{\sum_{w \in vocab} e^{u_{w}^{T}v_{c}}}{e^{u_{o}^{T}v_{c}} v_{c} } \\
+   &=v_{c}( \hat{y_{o}} - 1)
+   \end{aligned} $$
+
+2. When w \ne 0,
+    $$ \begin{aligned}
+    \frac{\partial J}{\partial u_{w \ne o}} &=\frac{1}{\sum_{w \in vocab} e^{u_{w}^{T}v_{c}}}{e^{u_{o}^{T}v_{c}} v_{c} } \\
+    &=v_{c}(\hat{y_{w \ne 0}})
+    \end{aligned} $$
+* Q.1.d
+
+Compute the partial derivative of $J_{naive-softmax}$ with respect to $U$.
+
+*** ANSWER
+
+Since, the vector is one-hot encoded vector, we get this simple representation:
+$$ \frac{\partial J}{\partial U} = \left[ \frac{\partial J}{\partial U_{1}}, \frac{\partial J}{\partial U_{2}},..., \frac{\partial J}{\partial U_{\left|vocab|\right}}\right] $$
+* Q.1.e
+
+Partial Derivative of sigmoid function.
+
+** ANSWER
+
+$$\sigma(x) = \frac{1}{1 + e^{-x}} $$
+
+Then, derivative of sigmoid is:
+
+$$ \frac{\partial \sigma(x)}{\partial x} = \frac{e^{-x}}{1 + e^{-x}} = \sigma(x)(1 - \sigma(x))$$
+* Q.1.f
+
+Compute the derivative of $J_{neg-sample}$ with respect to $v_{c}, u_{o}, u_{k}$.
+
+** Answer
+
+Given:
+    $$J_{neg-sample}(v_{c}, o, U) = - log(\sigma(u_{o}^{T}v_{c})) - \sum_{k=1}^{K} log(\sigma(-u_{k}^{T}v_{c}))$$
+
+Now,
+$$ \begin{aligned}
+\frac{\partial J}{\partial v_{c}} &= \frac{-1}{\sigma(u_{o}^{T}v_{c})} \sigma^{'}(u_{o}^{T}v_{c})u_{o
+}- \sum_{k} \frac{\sigma^{'}(-u_{k}^{T}v_{c})}{\sigma(-u_{k}^{T}v_{c})} ( -u_{k} ) \\
+&= (\sigma (u_{o}^{T}v_{c}) - 1 )u_{o} + \sum_{k} \left(1 - \sigma(-u_{k}^{T}v_{c}))u_{k}\right)
+\end{aligned}$$
+
+$$ \begin{aligned}
+\frac{\partial J}{\partial u_{o}} &= \frac{-1}{\sigma(u_{o}^{T}v_{c})} \sigma^{'}(u_{o}^{T}v_{c})v_{c} \\
+&= (\sigma (u_{o}^{T}v_{c}) - 1 )v_{c}
+\end{aligned}$$
+
+$$ \begin{aligned}
+\frac{\partial J}{\partial u_{}_{k}} &=  - \sum_{k} \frac{\sigma^{'}(-u_{k}^{T}v_{c})_{}}{\sigma(-u_{k}^{T}v_{c})} ( -v_{c}) \\
+&= \left(1 - \sigma(-u_{k}^{T}v_{c}))v_{c }_{}\right)
+\end{aligned}$$
+* Q.1.g
+
+Without the assumption that K negative samples are distinct, find derivative of  $J_{neg-sample}$ w.r.t. $u_{k}$.
+
+** Answer
+
+In our previous example, when derivative w.r.t. $u_{k}$ , we had the sum term gone since each sample was independent of another thus derivative w.r.t other samples will be 0 for each sample. Now, in this case, we can't assume that is the case.
+
+$$ \begin{aligned}
+\frac{\partial J}{\partial u_{}_{k}} &=  - \sum_{k} \frac{\sigma^{'}(-u_{k}^{T}v_{c})_{}}{\sigma(-u_{k}^{T}v_{c})} ( -v_{c}) \\
+&= \sum_{j=k} \left(1 - \sigma(-u_{j}_{}_{}_{}^{}^{T}v_{c}))v_{c }_{}\right)
+\end{aligned}$$
+
+* Q.1.h
+
+Now, for skip gram with context window, find three partial derivatives.
+
+** Answer
+
+Given:
+    $$J_{\text {skip-gram }}\left(\boldsymbol{v}_{c}, w_{t-m}, \ldots w_{t+m}, \boldsymbol{U}\right)=\sum_{-m \leq j \leq m \atop j \neq 0} \boldsymbol{J}\left(\boldsymbol{v}_{c}, w_{t+j}, \boldsymbol{U}\right)$$
+
+
+Now,
+iii. When w \ne c:
+    In this case, the derivative will be equal to 0.
