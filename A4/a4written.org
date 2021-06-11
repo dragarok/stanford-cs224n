@@ -1,0 +1,105 @@
+#+TITLE: A4written
+
+** Question 1.i.i
+
+Explain one advantage and one disadvantage of /dot product attention/ compared to multiplicative attention.
+
+*** ANSWER
+
++ Advantage:
+  - Too simple and less computation.
++ Disadvantage:
+  - Can't use relations other than similarity metric in the embeddings. Does the same operation even if there is any other better method to do it.
+
+** Question 1.i.ii
+
+Explain one advantage and one disadvantage of /additive attention/ compared to multiplicative attention.
+
+*** ANSWER
+
++ Advantage:
+  - Flexibility in context size or attention dimensionality.
++ Disadvantage:
+  - Slower and less space-efficient compared to multiplicative attention.
+** Question 2.i
+
+Why do embeddings at subword level rather than word level?
+
+*** Answer
+
++ Polysynthetic language: Contains morphemes
+  - Morphemes are word parts that have independent meaning but may or may not be able to stand alone.
+  - Words are made with lexical morphemes.
++ So, to get correct meanings for words, we need to understand the subwords properly. Thus, it might be important to model NMT problem at the sub-word level.
+** Question 2.ii
+
+Character-level and subword embeddings are often smaller than the whole word embeddings. Why?
+
+*** Answer
+
++ The number of legible combinations that can be created from character-level and subword level work are much smaller than what we can have with words. Thus, to represent words, which are typically great many in number, the embeddings need to be bigger.
+** Question 2.iii
+
+How does multilingual training help in improving NMT performance with low-resource languages?
+
+*** Answer
+
++ There can be languages that share similar characters or words which might be learned during multilingual training.
++ If the languages come from the same language root, they might share many common word roots which can be picked up by the model.
++ It helps learn the phones or multilingual word vectors which aid to the overall learning process as well.
+** Question 2.iv
+
+For each sentence prediction errors:
+a. Provide possible reason(s) why the model may have made the error.
+b. Describe possible way to alter NMT to fix the observed error.
+
+*** ANSWER
+
+**** Sentence 1
+#+begin_quote
+Source Translation: Yona utsesdo ustiyegv anitsilvsgi digvtanv uwoduisdei.
+Reference Translation: Fern had a crown of daisies in her hair.
+NMT Translation: Fern had her hair with her hair.
+#+end_quote
+
++ Possible Reason of error:
+  - Third word in the given sentence corresponds to word "hair".
++ Possible Solution:
+  - Attention to position of words seem to be learned more strongly which should be worked out.
+
+**** Sentence 2
+
+#+begin_quote
+Source Sentence: Ulihelisdi nigalisda.
+Reference Translation: She is very excited.
+NMT Translation: It’s joy.
+#+end_quote
+
++ Possible reason of error:
+  - Similarities in language for pronouns he/she/it.
++ Possible solution:
+  - ...
+
+**** Sentence 3
+
+#+begin_quote
+Source Sentence: Tsesdi hana yitsadawoesdi usdi atsadi!
+Reference Translation: Don’t swim there, Littlefish!
+NMT Translation: Don’t know how a small fish!
+#+end_quote
+
++ Possible reason of error
+  - Lack of training data with specific like noun "Littlefish"
++ Possible Solution:
+  - More training data.
+** Question 2.v.i
+
+One example where model is correct about it's prediction for a long 4 to 5 word. Check training target file for the exact sentence. Is it verbatim? If so, or if so not, what does this say about the model?
+
+
+*** Answer
+** Question 2.v.ii
+
+Find line where the answer diverges after 4 or 5 words correctly predicted. What does this say about the model's decoding behavior?
+
+*** Answer

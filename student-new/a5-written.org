@@ -1,0 +1,149 @@
+#+TITLE: A5 Written
+
+* Q.1.a.
+
+Copying in attention. Describe (in one sentence) what properties of the inputs to the attention operation would result in
+the output c being approximately equal to vj for some j ∈ {1, . . . , n}. Specifically, what must be
+true about the query q, the values {v1 , . . . , vn } and/or the keys {k1 , . . . , kn }?
+
+** ANSWER
+
+Since our softmax function never gives output that's exactly 0 to all the elements, we will copy our v_{j} into the attention output only if our value vector is represented as one-hot vector.
+* Q.1.b.
+
+Assume key vectors as perpendicular vectors and values be arbitrary. Let two values from value vectors be $v_{a}$ and $v_{b}$ . Give expression for query vector q such that the output c is approximately equal to average of the two.
+
+** ANSWER
+
+ + This has to be related to our keys. Keys are independent of each other.
+ + We need not scale $[k_{a}, k_{b}]$ since it's already assumed that $||k_{I}||$ = 1.
+   $$ q = \frac{k_{a} + k_{b}}{2}$$
+
+    Then,
+    $$ qk^{T} = [k_{a}.q, k_{b}.q, .... , k_{i}.q]$$
+   Since q is linear combination of two vectors $k_{a}$ and $k_{b}$, all the dot products except for $k_{a}$ and $k_{b}$ will be 0.
+    Thus, $$qk^{T} = [\frac{_{}k_{a}.k_{a}}{2}, \frac{k_{b}.k_{b}}{2}, 0,0,....,0]$$
+    Now alpha will be almost non-negligible for all the values that are 0. We can scale up the vector by scalar $s$ if required so that the probabilities get close to 0.5.
+* Q.1.c.i
+
+Now assuming key vectors are randomly sampled $k_{i} \sim \mathcal{N}(\mu_{i}, \sum_{i})$ with means $\mu_{i}$ known but covariances $\sum_{i}$ unknown. Further, all means $\mu_{i}$ are perpendicular and unit norm. $||\mu_{i}|| = 1$.
+
+Further assume, covariance matrices $\sum_{i} = \alpha I$, for vanishingly small \alpha. Design a query $q$ in terms of $\mu_{i}$ such that before, $c \approx \frac{1}{2}(v_{a} + v_{b})$. Provide a brief argument to why it works.
+
+
+** ANSWER
+
+* Q.1.c.ii
+
+Now assuming key vectors are randomly sampled $k_{i} \sim \mathcal{N}(\mu_{i}, \sum_{i})$ with means $\mu_{i}$ known but covariances $\sum_{i}$ unknown. Further, all means $\mu_{i}$ are perpendicular and unit norm. $||\mu_{i}|| = 1$.
+
+Though single-headed attention is resistant to small perturbations in the keys, some
+types of larger perturbations may pose a bigger issue. Specifically, in some cases, one key vector
+k_{a} may be larger or smaller in norm than the others, while still pointing in the same direction as
+\pi_{a} . As an example, let us consider a covariance for item a as $\sum_{a}_{} = αI + \frac{1}{2} (\mu_{a}\mu_{a}^{T})$ for vanishingly
+small α (as shown in figure 1). Further, let  $\sum_{i} = \alpha I$ for all $i \neq a$.
+When you sample {k1 , . . . , kn } multiple times, and use the q vector that you defined in part i.,
+what qualitatively do you expect the vector c will look like for different samples?
+
+** ANSWER
+* Q.1.d.i
+
+Now in multi-headed attention, we have two output vectors c_{1} and c_{2}.
+Similar to assumptions in  [[Q.1.c.i]] Design q_{1} and q_{2} such that c is approximately equal to averages of v_{a} and v_{b}.
+
+** ANSWER
+
+* Q.1.d.ii
+
+Similar to [[Q.1.c.ii ]], what qualitatively do you expect the output x to look like across different samples of the key vectors. Please briefly explain why. You can ignore cases in which $q_{i}^{T}k_{a} < 0$.
+* Q.1.e.i
+
+Assume keys, queries and values all are same as the input $x_{i}$. Let's consider specific set of x.
+In particular, let u_{a} , u_{b} , u_{c} , u_{d} be mutually orthogonal vectors in R^{d} , each with equal norm ∥u_{a}∥ = ∥u_{b} ∥ = ∥u_{c} ∥ = ∥u_{d} ∥ = β, where β is very large. Now, let our x_{i} be:
+    $$x_{i} = u_{d} + u_{b} ; x_{2} = u_{a}; x_{3} = u_{c} + u_{b}$$
+    If we do attention with these vectors, what vector does c_{2} approximate? Would it be possible for c_{2} to approximate u_{b} by either u_{d} or u_{c} to x_{2} ? Explain why or why not.
+
+** ANSWER
+
+Here, in the first case $c_{2}$ would approximate to be $u_{a}$ since the dot products for values other than $x_{2}$ would be zero. Thus, softmax will assign most probability to $\alpha_{22}$.
+
+About the possibility to approximate $u_{b}$ by either $u_{d}$ or $u_{c}$, we cannot do that since the product of orthogonal vectors will result in zero. Instead it will not approximate to one specific value since we will have multiple dot products that are not equal to zero.
+* Q.1.e.ii
+
+Now using same definitions of x_{1}, x_{2} and x_{3} in [[Q.1.e.i]] , specify matrices $K,Q,V$ such that $c_{2} \approx u_{b}$, and $c_{1} \approx u_{b} - u_{c}$. First find V such that $v_{1} = u_{b}$ and $v_{3} = u_{b} - u_{c}$, then work on Q and K.
+
+** ANSWER
+
+First the value matrix is
+    $$\begin{bmatrix}
+    4 && 0 && -1\\
+    1 && 0 && 1\\
+    0 && 0 && 0\\
+    \end{bmatrix}$$
+
+Then, the query matrix is
+
+    $$\begin{bmatrix}
+    -1 && 0 && 1\\
+    0 && 1 && 0\\
+    0 && 0 && 0\\
+    \end{bmatrix}$$
+
+And the key matrix is
+
+    $$\begin{bmatrix}
+    0 && 1 && 0\\
+    0 && 0 && 0\\
+    -1 && 0 && 1\\
+    \end{bmatrix}$$
+
+* Q.2.d
+
+** Model accuracy in validation
+
++ Correct: 10.0 out of 500.0: 2.0%
+** Accuracy with London as prediction for all
+
++ Correct:  91.0  out of  2000.0 : 4.55 %
+* Q.2.e
+
+** Model accuracy in dev set
+
++ Correct: 25.0 out of 500.0: 5.0%
+* Q.2.f
+
+** Model accuracy in dev set
+
+*** TODO Put accuracy in here
+
+
+** Why might the synthesizer self-attention not be able to do, in single layer, what key-query-value self-attention can do?
+
+This might be because of the number of parameters that is being trained. We have three different weight matrices for key, quey and value trying to map from our input representation to attention output. In synthesizer attention, we have only two.
+
+* Q.3.a
+
+Why pretrained model was able to achieve an accuracy of > 10%  whereas non-pretrained model was not?
+
+** ANSWER
+
+It's because the model learns useful representations during pretraining and that when used afterwards for finetuning, it's like turning the knob slightly to get to the output. In case of non-pretrained model, you are trying to move knob one way or another in few iterations, which is not really useful.
+
+
+* Q.3.b
+
+Come up with two reasons why the indeterminacy of model [ not being able to correctly say whether the model retrieved the correct birth place, or just made it up ] may cause concern for such applications.
+
+** ANSWER
+
+1. Answers to questions that are made up may offend people and we have no way of knowing it beforehand about what might happen when people interact with it.
+2. We don't know the vulnerabilities of the model. Disturbing information might be disclosed casually. For example : Models used in mental health talks might give some suggestion to people that we don't understand.
+
+* Q.3.c
+
+Even with people that are not in pretrained dataset as well as fine-tuning dataset, model will make predictions. Describe a strategy your model might take for predicting a birth place for that person's name, and one reason why this should cause concern for the use of such applications.
+
+** ANSWER
+
+Model will probably predict it based on people with similar names and their birth place.
+And this would cause concerns since we can't generalize birth places based on names. People search for names from all over the world and as we get globalized, it's as diverse as it can be. Regarding predictions, people might get infuriated by the model saying birth place is a different one. e.g. Buddha was born in Nepal had a huge campaign. If the model predicts it to be China or India, there would be people rioting against it.

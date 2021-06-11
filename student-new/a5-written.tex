@@ -1,0 +1,73 @@
+% Created 2021-05-26 Wed 09:19
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Alok Regmi\thanks{sagar.r.alok@gmail.com}}
+\date{\today}
+\title{A5 Written}
+\hypersetup{
+ pdfauthor={Alok Regmi},
+ pdftitle={A5 Written},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.0.50 (Org mode 9.5)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+
+\section*{Q.1.a.}
+\label{sec:orgf864f36}
+
+Copying in attention. Describe (in one sentence) what properties of the inputs to the attention operation would result in
+the output c being approximately equal to vj for some j ∈ \{1, . . . , n\}. Specifically, what must be
+true about the query q, the values \{v1 , . . . , vn \} and/or the keys \{k1 , . . . , kn \}?
+
+\subsection*{\acr{answer}}
+\label{sec:org8311e15}
+
+Since our softmax function never gives output that's exactly 0 to all the elements, we will copy our v\textsubscript{j} into the attention output only if our value vector is represented as one-hot vector.
+\section*{Q.1.b.}
+\label{sec:org4c8d08e}
+
+Assume key vectors as perpendicular vectors and values be arbitrary. Let two values from value vectors be \(v_{a}\) and \(v_{b}\) . Give expression for query vector q such that the output c is approximately equal to average of the two.
+
+\subsection*{\acr{answer}}
+\label{sec:org3e76666}
+
+\begin{itemize}
+\item This has to be related to our keys. Keys are independent of each other.
+\item We need not scale \([k_{a}, k_{b}]\) since it's already assumed that \(||k_{I}||\) = 1.
+$$ q = \frac{k_{a} + k_{b}}{2}$$
+
+ Then,
+ $$ qk^{T} = [k_{a}.q, k_{b}.q, .... , k_{i}.q]$$
+Since q is linear combination of two vectors \(k_{a}\) and \(k_{b}\), all the dot products except for \(k_{a}\) and \(k_{b}\) will be 0.
+ Thus, $$qk^{T} = [\frac{_{}k_{a}.k_{a}}{2}, \frac{k_{b}.k_{b}}{2}, 0,0,....,0]$$
+ Now alpha will be almost non-negligible for all the values that are 0. We can scale up the vector by scalar \(s\) if required so that the probabilities get close to 0.5.
+\end{itemize}
+\section*{Q.1.c.i}
+\label{sec:org5c0b914}
+
+Now assuming key vectors are randomly sampled \(k_{i} \sim \mathcal{N}(\mu_{i}, \sum_{i})\) with means \(\mu_{i}\) known but covariances \(\sum_{i}\) unknown. Further, all means \(\mu_{i}\) are perpendicular and unit norm. \(||\mu_{i}|| = 1\).
+
+Further assume, covariance matrices \(\sum_{i} = \alpha I\), for vanishingly small \(\alpha\).
+
+\section*{Q.1.c.ii}
+\label{sec:orgf06edcc}
+\end{document}
